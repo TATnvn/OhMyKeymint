@@ -163,6 +163,7 @@ jobs:
       env:
         BORINGSSL_BUILD_DIR: ${{ github.workspace }}/boringssl/build
       run: |
+        unset RUSTFLAGS
         cargo fmt --all -- --check
         cargo clippy --target aarch64-linux-android --workspace --all-targets -- -D warnings
         cargo test --target aarch64-linux-android --workspace --no-run
