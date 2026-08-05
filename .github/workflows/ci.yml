@@ -195,6 +195,15 @@ jobs:
             if not executable:
                 continue
             source = Path(executable)
+            header = source.read_bytes()[:20]
+            is_aarch64_elf = (
+                header[:4] == b"\x7fELF"
+                and len(header) >= 20
+                and int.from_bytes(header[18:20], "little") == 183
+            )
+            if not is_aarch64_elf:
+                print(f"skipping non-AArch64 test executable: {source}")
+                continue
             destination = output / source.name
             shutil.copy2(source, destination)
             executables.append(destination)
