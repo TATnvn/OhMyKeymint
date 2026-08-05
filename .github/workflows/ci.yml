@@ -165,6 +165,7 @@ jobs:
       run: |
         cargo fmt --all -- --check
         cargo clippy --target aarch64-linux-android --workspace --all-targets -- -D warnings
+        cargo test --target aarch64-linux-android --workspace --no-run
         cargo test --target aarch64-linux-android --workspace --no-run --message-format=json \
           > target/android-test-build.json
 
