@@ -6,11 +6,11 @@ const LEGACY_SYNTHETIC_COOKIE_PREFIX: u64 = 0x4f4d_4b43_0000_0000;
 
 fn assert_native_target_is_not_fabricated(target: LocalBinderTarget) {
     assert_ne!(
-        target.ptr as u64 & LEGACY_SYNTHETIC_TARGET_MASK,
+        target.ptr & LEGACY_SYNTHETIC_TARGET_MASK,
         LEGACY_SYNTHETIC_PTR_PREFIX
     );
     assert_ne!(
-        target.cookie as u64 & LEGACY_SYNTHETIC_TARGET_MASK,
+        target.cookie & LEGACY_SYNTHETIC_TARGET_MASK,
         LEGACY_SYNTHETIC_COOKIE_PREFIX
     );
 }
