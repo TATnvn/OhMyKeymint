@@ -1,5 +1,20 @@
 use super::*;
 
+const LEGACY_SYNTHETIC_TARGET_MASK: u64 = 0xffff_ffff_0000_0000;
+const LEGACY_SYNTHETIC_PTR_PREFIX: u64 = 0x4f4d_4b53_0000_0000;
+const LEGACY_SYNTHETIC_COOKIE_PREFIX: u64 = 0x4f4d_4b43_0000_0000;
+
+fn assert_native_target_is_not_fabricated(target: LocalBinderTarget) {
+    assert_ne!(
+        target.ptr as u64 & LEGACY_SYNTHETIC_TARGET_MASK,
+        LEGACY_SYNTHETIC_PTR_PREFIX
+    );
+    assert_ne!(
+        target.cookie as u64 & LEGACY_SYNTHETIC_TARGET_MASK,
+        LEGACY_SYNTHETIC_COOKIE_PREFIX
+    );
+}
+
 fn no_carrier_operation_target() -> (
     LocalBinderTarget,
     parcel::OwnedReply,
@@ -86,6 +101,7 @@ fn no_carrier_omk_key_entry_reply_uses_synthetic_security_level_mapping() {
 
     let target = unsafe { parse_local_binder_target_from_parcel_bytes(&carrier.bytes) }
         .expect("synthetic security-level carrier should expose a native target");
+    assert_native_target_is_not_fabricated(target);
     assert!(lookup_native_binder(target).is_some());
     assert_eq!(
         lookup_synthetic_target(target),
@@ -105,6 +121,7 @@ fn no_carrier_create_operation_registers_native_mapping_and_caller() {
     let _guard = route_state_test_guard();
     let (target, _reply, _, caller) = no_carrier_operation_target();
 
+    assert_native_target_is_not_fabricated(target);
     assert!(lookup_native_binder(target).is_some());
     assert_eq!(
         lookup_synthetic_target(target),
